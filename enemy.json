@@ -1,0 +1,68 @@
+[
+     {
+      "id": 0,
+      "nom": "Blue Slime",
+      "img": "  /\\ \n( 0 0)\n",
+      "col": "#c11b55",
+      "lvl": 0.5,
+      "exp": 3.5,
+      "str": 10,
+      "int": 10,
+      "dex": 5,
+      "con": 10,
+      "spd": 10,
+      "mp_bonus": 1,
+      "item_id": 1,
+      "item_name": "Blue Jelly"
+
+    },
+     {
+      "id": 1,
+      "nom": "Green Slime",
+      "img": "  /\\ \n( 0 0)\n",
+      "col": "#c11b55",
+      "lvl": 0.5,
+      "exp": 3.5,
+      "str": 10,
+      "int": 10,
+      "dex": 5,
+      "con": 10,
+      "spd": 10,
+      "mp_bonus": 1,
+      "item_id": 2,
+      "item_name": "Green Jelly"
+    },
+     {
+      "id": 2,
+      "nom": "Red Slime",
+      "img": "  /\\ \n( 0 0)\n",
+      "col": "#c11b55",
+      "lvl": 0.5,
+      "exp": 3.5,
+      "str": 10,
+      "int": 10,
+      "dex": 5,
+      "con": 10,
+      "spd": 10,
+      "mp_bonus": 1,
+      "item_id": 3,
+      "item_name": "Red Jelly"
+    },
+     {
+      "id": 3,
+      "nom": "Bone Slime",
+      "img": "  /\\  \n[ - -]",
+      "lvl": 1,
+      "exp": 7,
+      "str": 12,
+      "int": 10,
+      "dex": 5,
+      "con": 11,
+      "spd": 11,
+      "mp_bonus": 1,
+      "item_id": 5,
+      "item_name": "Bone Meal"
+    }
+  ]
+
+

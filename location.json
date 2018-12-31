@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1,
+    "name": "First Forest",
+    "flavor": "It is a freaking forest, what more do you want?",
+    "enemy": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "item": [
+      7,
+      "gold"
+    ],
+    "rand": [
+      22.5,
+      45,
+      67.5,
+      90,
+      95,
+      100
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "id": 0,
+    "name": "0. Magic Missile (7MP)",
+    "disp": "Magic Missile",
+    "flavor": "Did 5 dmg!",
+    "examine": "A copy of DND spell. Cost: 7MP",
+    "dmg": 5,
+    "hp": 0,
+    "mp": 7,
+    "effect": false
+  },
+    {
+    "id": 1,
+    "name": "1. Health Buff (7MP)",
+    "disp": "Health Buff",
+    "flavor": "You gain 2 hp!",
+    "examine": "Gain 5 HP. Cost: 7MP",
+    "dmg": 0,
+    "hp": 5,
+    "mp": 7,
+    "effect": false
+  },
+  {
+    "id": 2,
+    "name": "2. Mana Drain (5MP)",
+    "disp": "Mana Drain",
+    "flavor": "You gain 2 hp!",
+    "examine": "Slowly drains enemy's MP over three turns. Cost: 5MP",
+    "dmg": 0,
+    "hp": 5,
+    "mp": 5,
+    "effect": false
+  }
+]
