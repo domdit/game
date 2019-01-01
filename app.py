@@ -23,7 +23,12 @@ item_data = json.load(json_data)
 spell_json = "spells.json"
 json_data = open(spell_json)
 spells_data = json.load(json_data)
+
+effect_json = "effect.json"
+json_data = open(effect_json)
+effect_data = json.load(json_data)
 # ##################################
+
 
 # Prompts the user to answer question with either y/n
 def yn(question):
@@ -95,6 +100,12 @@ class Char:
 
         self.sleep = sleep_speed
 
+        self.effect = None
+        self.effect_status = 0
+        # this is to ensure that the effect will not happen twice the turn it is used
+        self.effect_duration = False
+        self.duration_count = 0
+
     def update(self):
         self.hp = (self.con + self.str) / 2
         self.mp = (self.int * self.mp_bonus)
@@ -135,6 +146,7 @@ def exp_left(dude):
     val = levels[i]
     left = val - exp
     return left
+
 
 def exp_until(dude):
     exp = dude.exp
@@ -216,7 +228,7 @@ class Enemy:
 
     def __init__(self, enemy):
 
-        self.nom = enemy_data[enemy]['nom']
+        self.name = enemy_data[enemy]['nom']
         self.img = enemy_data[enemy]['img']
         self.lvl = enemy_data[enemy]['lvl']
         self.exp = enemy_data[enemy]['exp']
@@ -232,6 +244,14 @@ class Enemy:
         self.current_mp = self.mp
         self.item_id = enemy_data[enemy]['item_id']
         self.item_name = enemy_data[enemy]['item_name']
+
+        self.effect = None
+        self.effect_status = 0
+
+        # this is to ensure that the effect will not happen twice the turn it is used
+        self.effect_duration = False
+        self.duration_count = 0
+
 
 
 # same as Enemy class, except this will auto-add an item
@@ -455,14 +475,10 @@ class Location:
 # another instance for it (may be unnecessary)
 def get_item(player, x):
 
-    item_name = item_data[x]['name']
     item_disp = item_data[x]['disp']
 
     cls()
     print(player.name + " found " + item_disp + "!!!")
-    # instead of appending the item to the dictionary, I just sent it
-    # through the item class, this needs to happen, I am just writing this
-    # in case something goes wrong
     Item(x)
     wait()
     main(player)
@@ -474,7 +490,7 @@ def get_item(player, x):
 # through the other battle phases
 def encounter(player, enemy):
     cls()
-    print(player.name + " encountered a " + enemy.nom + "!!!")
+    print(player.name + " encountered a " + enemy.name + "!!!")
     sleep(player.sleep)
     while enemy.current_hp > 0:
         battle(player, enemy)
@@ -489,7 +505,32 @@ def encounter(player, enemy):
 # need cooler attacks, weapons, shit like that
 def battle(player, enemy):
     cls()
-    cprint(enemy.nom)
+
+    # these four 'if' clauses are ugly bastardizations of an ideal that most likely exists
+    # yet on that I am not privy to. for now, this is my duct-tape method.
+
+    if player.duration_count > 0:
+        do_spell_effect(player)
+    else:
+        pass
+
+    if enemy.duration_count > 0:
+        do_spell_effect(enemy)
+    else:
+        pass
+
+    if player.effect_duration is True:
+        player.duration_count += 1
+    else:
+        pass
+
+    if enemy.effect_duration is True:
+        enemy.duration_count += 1
+    else:
+        pass
+
+
+    cprint(enemy.name)
     health(enemy)
     mana(enemy)
     cprint(enemy.img)
@@ -562,6 +603,7 @@ def use_item(player, enemy):
             wait()
             use_item(player, enemy)
 
+
 def run_away(player, enemy):
     if player.spd >= enemy.spd:
         cls()
@@ -583,6 +625,7 @@ def run_away(player, enemy):
     else:
         print("there was a problem")
         main(player)
+
 
 # decides who goes first based on their speed stat
 def do_spd(player, enemy, spell):
@@ -623,6 +666,94 @@ def char_atk(player, enemy):
         # this needs to be changed
         # will cause problems when enemy is faster...
 
+
+def do_spell_effect(dude):
+    # user used the spell, reciever recieves the effect (yeah but sometimes the user recieves the effect)
+    global player
+
+    if dude.effect_status > 0:
+
+        effect_name = effect_data[dude.effect]['name']
+        hp = effect_data[dude.effect]['hp']
+        dmg = effect_data[dude.effect]['dmg']
+        mp = effect_data[dude.effect]['mp']
+        mp_dmg = effect_data[dude.effect]['mp_dmg']
+
+        dude.current_hp += hp
+        dude.current_hp -= dmg
+        dude.current_mp += mp
+        dude.current_mp -= mp_dmg
+
+        cls()
+        cprint(dude.name + " if effected by " + effect_name, 'magenta')
+
+        sleep(player.sleep)
+
+        if hp > 0:
+            cprint(dude.name + " gained " + str(hp) + "hp!", 'green')
+            sleep(player.sleep)
+        else:
+            pass
+
+
+
+        if dmg > 0:
+            cprint(dude.name + " lost " + str(dmg) + "hp!", 'red')
+            sleep(player.sleep)
+        else:
+            pass
+
+
+
+        if mp > 0:
+            cprint(dude.name + " gained " + str(mp) + "mp!", 'blue')
+            sleep(player.sleep)
+        else:
+            pass
+
+
+        if mp_dmg > 0:
+            cprint(dude.name + " lost " + str(mp_dmg) + "mp!", 'red')
+        else:
+            pass
+
+        dude.effect_status -= 1
+        dude.effect_duration = True
+
+        cls()
+
+    else:
+        pass
+
+
+def spell_effect(player, enemy, spell_id):
+    effect_1 = spells_data[spell_id]['effect_id'][0]
+    # effect_2 = spells_data[spell_id]['effect_id'][1]
+    # effect_3 = spells_data[spell_id]['effect_id'][2]
+    # effect_4 = spells_data[spell_id]['effect_id'][3]
+
+    if effect_1:
+        effect_1_id = effect_data[effect_1]['id']
+        effect_1_turn = effect_data[effect_1]['turn']
+        effect_1_type = effect_data[effect_1]['type']
+
+        if effect_1_type == 0:
+
+            enemy.effect_status = effect_1_turn
+            enemy.effect = effect_1_id
+
+        elif effect_1_type == 1:
+
+            player.effect_status = effect_1_turn
+            player.effect = effect_1_id
+
+        else:
+            pass
+
+    else:
+        pass
+
+
 #do magic attack
 def char_spell(player, enemy):
     cls()
@@ -653,17 +784,35 @@ def char_spell(player, enemy):
                 spell_disp = spells_data[action]['disp']
                 spell_name = spells_data[action]['name']
                 spell_flavor = spells_data[action]['flavor']
-                hp = spells_data[action]['hp']
                 mp = spells_data[action]['mp']
                 dmg = spells_data[action]['dmg']
+                effect = spells_data[action]['effect_id']
 
+                if mp > player.current_mp:
+                    print("You do not have enough MP to cast this spell.")
+                    wait()
+                    char_spell(player, enemy)
+                else:
+                    pass
+
+                # only purely damaging spells do not need to go through
+                # spell_effect()
                 if spell_name in spells:
                     player.current_mp -= mp
-                    player.current_hp += hp
-                    enemy.current_hp -= dmg
-                    cls()
                     cprint(player.name + " used " + spell_disp + "!!", 'blue')
                     cprint(spell_flavor, 'blue')
+
+                    if effect:
+                        spell_effect(player, enemy, action)
+
+                        do_spell_effect(player)
+                        do_spell_effect(enemy)
+                    else:
+                        pass
+
+                    enemy.current_hp -= dmg
+                    cls()
+
                     sleep(player.sleep)
 
                     if enemy.current_hp <= 0:
@@ -694,7 +843,7 @@ def enemy_atk(player, enemy):
     player.current_hp = int(player.current_hp - damage)
     health(player)
     cls()
-    cprint(enemy.nom + " did " + str(damage) + " melee damage!!", 'red')
+    cprint(enemy.name + " did " + str(damage) + " melee damage!!", 'red')
     sleep(player.sleep)
     if player.current_hp <= 0:
         print("how did you die to a slime?")
@@ -705,14 +854,25 @@ def enemy_atk(player, enemy):
 # ends the encounter, checks if player leveled up or not
 def end_encounter(player, enemy):
     cls()
-    print("Good job, you slaughtered " + enemy.nom + "!!!!!")
+    print("Good job, you slaughtered " + enemy.name + "!!!!!")
     health(enemy)
     sleep(player.sleep)
     cls()
     print("You found " + enemy.item_name)
     sleep(player.sleep)
+
     enemy.current_hp = enemy.hp
     enemy.current_mp = enemy.mp
+
+    enemy.effect_status = 0
+    enemy.effect_duration = False
+    enemy.duration_count = 0
+
+    player.effect_status = 0
+    player.effect_duration = False
+    player.duration_count = 0
+
+
 
     # in this section we are checking whether or not
     # the player has levelled up
@@ -1239,6 +1399,7 @@ def options(dude):
         wait()
         options(dude)
 
+
 def rand_gold(dude):
     chance = dice_roll(100, 1)
     if chance <= 80:
@@ -1263,7 +1424,6 @@ def rand_gold(dude):
             pass
     wait()
     main(dude)
-
 
 
 # main screen where player chooses what to do

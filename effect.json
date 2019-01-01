@@ -1,0 +1,33 @@
+[
+  {
+    "id": 0,
+    "name": "Mana Drain 1",
+    "type": 0,
+    "turn": 3,
+    "dmg": 0,
+    "hp": 0,
+    "mp": 4,
+    "mp_dmg": 4
+
+  },
+  {
+    "id": 1,
+    "name": "Health Gain 1",
+    "type": 1,
+    "turn": 2,
+    "dmg": 0,
+    "hp": 5,
+    "mp": 0,
+    "mp_dmg": 0
+  },
+  {
+    "id": 2,
+    "name": "Poison 1",
+    "type": 0,
+    "turn": 3,
+    "dmg": 5,
+    "hp": 0,
+    "mp": 0,
+    "mp_dmg": 0
+  }
+]
